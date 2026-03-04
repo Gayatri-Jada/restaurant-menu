@@ -1,0 +1,54 @@
+body{
+margin:0;
+font-family:Segoe UI;
+overflow:hidden;
+}
+
+.container{
+display:flex;
+width:500%;
+transition:0.5s;
+}
+
+.page{
+width:100vw;
+height:100vh;
+padding:20px;
+box-sizing:border-box;
+overflow-y:auto;
+background:#f8f9fa;
+}
+
+.welcome{
+background:#d62828;
+color:white;
+text-align:center;
+display:flex;
+flex-direction:column;
+justify-content:center;
+}
+
+button{
+background:#2a9d8f;
+color:white;
+border:none;
+padding:8px 15px;
+border-radius:6px;
+}
+
+.card{
+background:white;
+padding:10px;
+margin:10px 0;
+border-radius:8px;
+box-shadow:0 3px 6px rgba(0,0,0,0.1);
+display:flex;
+justify-content:space-between;
+}
+
+.nav{
+position:fixed;
+bottom:10px;
+width:100%;
+text-align:center;
+}

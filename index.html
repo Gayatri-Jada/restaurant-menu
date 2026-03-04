@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>South Spice Restaurant</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+body{
+margin:0;
+font-family:'Segoe UI',sans-serif;
+overflow:hidden;
+background:#f1f1f1;
+}
+
+.header{
+background:#d62828;
+color:white;
+padding:15px;
+text-align:center;
+font-size:20px;
+font-weight:bold;
+}
+
+.container{
+display:flex;
+width:500%;
+transition:0.5s ease-in-out;
+}
+
+.page{
+width:100vw;
+height:100vh;
+padding:15px;
+box-sizing:border-box;
+overflow-y:auto;
+background:#f8f9fa;
+}
+
+.welcome{
+background:linear-gradient(135deg,#d62828,#a4161a);
+color:white;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+text-align:center;
+}
+
+.category{
+margin-top:15px;
+font-size:18px;
+font-weight:bold;
+color:#333;
+border-bottom:2px solid #d62828;
+padding-bottom:5px;
+}
+
+.card{
+background:white;
+padding:12px;
+margin:10px 0;
+border-radius:10px;
+box-shadow:0 4px 8px rgba(0,0,0,0.1);
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+button{
+background:#2a9d8f;
+color:white;
+border:none;
+padding:6px 12px;
+border-radius:6px;
+cursor:pointer;
+}
+
+.nav{
+position:fixed;
+bottom:10px;
+width:100%;
+text-align:center;
+}
+
+textarea{
+width:100%;
+padding:8px;
+border-radius:6px;
+margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">🍽 South Spice Restaurant</div>
+
+<div class="container" id="container">
+
+<!-- PAGE 1 -->
+<div class="page welcome">
+<h1>Welcome</h1>
+<p>Authentic South Indian Veg & Non-Veg</p>
+<button onclick="nextPage()">Start Ordering</button>
+</div>
+
+<!-- PAGE 2 -->
+<div class="page">
+<h2>🥗 Starters</h2>
+<div id="starters"></div>
+</div>
+
+<!-- PAGE 3 -->
+<div class="page">
+<h2>🍛 Main Course</h2>
+<div id="maincourse"></div>
+</div>
+
+<!-- PAGE 4 -->
+<div class="page">
+<h2>🍨 Desserts & Mocktails</h2>
+<div id="desserts"></div>
+</div>
+
+<!-- PAGE 5 -->
+<div class="page">
+<h2>🧾 Final Bill</h2>
+<div id="bill"></div>
+<h3>Total: ₹ <span id="total">0</span></h3>
+
+<button onclick="downloadPDF()">Download Bill PDF</button>
+
+<h3>Feedback</h3>
+<textarea placeholder="Write your feedback"></textarea>
+
+<h3>Scan & Pay</h3>
+<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=SouthSpicePayment">
+</div>
+
+</div>
+
+<div class="nav">
+<button onclick="prevPage()">⬅ Prev</button>
+<button onclick="nextPage()">Next ➡</button>
+</div>
+
+<script>
+
+let page=0;
+function nextPage(){ if(page<4) page++; move(); }
+function prevPage(){ if(page>0) page--; move(); }
+function move(){ document.getElementById("container").style.transform="translateX(-"+page*100+"vw)"; }
+
+let cart={};
+let prices={};
+
+function createMenu(section,items){
+let div=document.getElementById(section);
+items.forEach(item=>{
+cart[item[0]]=0;
+prices[item[0]]=item[1];
+
+div.innerHTML+=`
+<div class="card">
+<div><b>${item[0]}</b><br>₹${item[1]}</div>
+<div>
+<button onclick="update('${item[0]}',-1)">-</button>
+<span id="${item[0]}">0</span>
+<button onclick="update('${item[0]}',1)">+</button>
+</div>
+</div>`;
+});
+}
+
+function update(name,change){
+cart[name]+=change;
+if(cart[name]<0) cart[name]=0;
+document.getElementById(name).innerText=cart[name];
+generateBill();
+}
+
+function generateBill(){
+let total=0;
+let html="";
+for(let item in cart){
+if(cart[item]>0){
+let sub=cart[item]*prices[item];
+total+=sub;
+html+=item+" x "+cart[item]+" = ₹"+sub+"<br>";
+}
+}
+document.getElementById("bill").innerHTML=html;
+document.getElementById("total").innerText=total;
+}
+
+function downloadPDF(){
+const { jsPDF } = window.jspdf;
+const doc = new jsPDF();
+doc.text("South Spice Restaurant Bill",10,10);
+let y=20;
+for(let item in cart){
+if(cart[item]>0){
+doc.text(item+" x "+cart[item]+" = ₹"+(cart[item]*prices[item]),10,y);
+y+=10;
+}
+}
+doc.text("Total: ₹ "+document.getElementById("total").innerText,10,y+10);
+doc.save("SouthSpiceBill.pdf");
+}
+
+/* 10+ Items Each */
+
+createMenu("starters",[
+["Gobi 65",120],["Paneer Tikka",150],["Veg Roll",130],
+["Mushroom Fry",160],["Baby Corn",140],
+["Chicken 65",170],["Pepper Chicken",185],
+["Chicken Lollipop",200],["Mutton Chukka",220],
+["Fish Fry",210]
+]);
+
+createMenu("maincourse",[
+["Veg Meals",180],["Paneer Butter Masala",200],
+["Mushroom Biryani",190],["Veg Fried Rice",170],
+["Curd Rice",120],["Chicken Biryani",220],
+["Mutton Biryani",260],["Fish Curry",240],
+["Chicken Chettinad",230],["Egg Fried Rice",180]
+]);
+
+createMenu("desserts",[
+["Gulab Jamun",90],["Rasgulla",85],
+["Ice Cream",100],["Kesari",80],
+["Payasam",95],["Mango Mocktail",120],
+["Lime Soda",70],["Rose Milk",60],
+["Badam Milk",110],["Chocolate Shake",150]
+]);
+
+</script>
+
+</body>
+</html>
