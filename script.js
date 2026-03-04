@@ -1,3 +1,5 @@
+alert("JS Connected");
+
 function generateOrderId() {
     return "ORD" + Math.floor(Math.random() * 100000);
 }
@@ -16,3 +18,4 @@ function payNow() {
 
     document.getElementById("paymentSuccess").style.display = "block";
 }
+
