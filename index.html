@@ -103,7 +103,18 @@ margin-top:10px;
 }
 </style>
 </head>
+<body>
 
+  <!-- Menu Items Here -->
+
+  <div class="total-section">
+      <h3>Total: ₹ <span id="total">0</span></h3>
+      <button onclick="payNow()">Pay Now</button>
+  </div>
+
+  <script src="script.js"></script>
+
+</body>
 <body>
 
 <div class="header">🍽 South Spice Restaurant</div>
@@ -139,7 +150,6 @@ margin-top:10px;
 <div class="page">
 <h2>🧾 Final Bill</h2>
 <div id="bill"></div>
-<h3>Total: ₹ <span id="total">0</span></h3>
 
 <button onclick="downloadPDF()">Download Bill PDF</button>
 
@@ -252,4 +262,5 @@ createMenu("desserts",[
 </body>
 
 </html>
+
 
